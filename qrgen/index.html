@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #url-input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #save-btn {
+            display: none;
+            margin-top: 10px;
+        }
+
+        #qrcode {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Generator</h1>
+        <input type="text" id="url-input" placeholder="Enter URL or Text">
+        <button onclick="generateQRCode()">Generate QR Code</button>
+        <div id="qrcode"></div>
+        <button id="save-btn" onclick="saveQRCode()">Save QR Code</button>
+    </div>
+
+    <!-- Include the QRCode.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        function generateQRCode() {
+            // Get the input value
+            const url = document.getElementById('url-input').value;
+
+            // Clear any existing QR code and hide save button
+            const qrcodeContainer = document.getElementById('qrcode');
+            qrcodeContainer.innerHTML = '';
+            document.getElementById('save-btn').style.display = 'none';
+
+            // Generate new QR code if input is not empty
+            if (url.trim()) {
+                new QRCode(qrcodeContainer, {
+                    text: url,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                });
+
+                // Show the save button
+                document.getElementById('save-btn').style.display = 'inline-block';
+            } else {
+                alert("Please enter a URL or text.");
+            }
+        }
+
+        function saveQRCode() {
+            const qrCodeCanvas = document.querySelector('#qrcode canvas');
+            if (qrCodeCanvas) {
+                // Convert the canvas to an image
+                const qrCodeImage = qrCodeCanvas.toDataURL('image/png');
+
+                // Create a temporary link element
+                const downloadLink = document.createElement('a');
+                downloadLink.href = qrCodeImage;
+                downloadLink.download = 'qr_code.png';
+
+                // Trigger the download
+                downloadLink.click();
+            } else {
+                alert("Please generate a QR code first.");
+            }
+        }
+    </script>
+</body>
+</html>
