@@ -1,3 +1,3 @@
 A testing website.
 
-https://alanyoung23.github.io/main
+https://alanyoung23.github.io
