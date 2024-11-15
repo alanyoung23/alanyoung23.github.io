@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #faf8ef;
+        }
+
+        .game-container {
+            width: 320px;
+            background-color: #bbada0;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #776e65;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tile {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #776e65;
+            background-color: #cdc1b4;
+            border-radius: 5px;
+        }
+
+        .tile[data-value="2"] { background-color: #eee4da; color: #776e65; }
+        .tile[data-value="4"] { background-color: #ede0c8; color: #776e65; }
+        .tile[data-value="8"] { background-color: #f2b179; color: #f9f6f2; }
+        .tile[data-value="16"] { background-color: #f59563; color: #f9f6f2; }
+        .tile[data-value="32"] { background-color: #f67c5f; color: #f9f6f2; }
+        .tile[data-value="64"] { background-color: #f65e3b; color: #f9f6f2; }
+        .tile[data-value="128"] { background-color: #edcf72; color: #f9f6f2; }
+        .tile[data-value="256"] { background-color: #edcc61; color: #f9f6f2; }
+        .tile[data-value="512"] { background-color: #edc850; color: #f9f6f2; }
+        .tile[data-value="1024"] { background-color: #edc53f; color: #f9f6f2; }
+        .tile[data-value="2048"] { background-color: #edc22e; color: #f9f6f2; }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>2048 Game</h1>
+        <div class="grid" id="grid">
+            <!-- Tiles will be added here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const gridSize = 4;
+        let grid;
+        const initValue = 2;
+
+        function createGrid() {
+            grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(0));
+            const gridElement = document.getElementById('grid');
+            gridElement.innerHTML = '';
+
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                gridElement.appendChild(tile);
+            }
+            addTile();
+            addTile();
+            updateGrid();
+        }
+
+        function addTile() {
+            let emptyTiles = [];
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    if (grid[r][c] === 0) emptyTiles.push({ r, c });
+                }
+            }
+            if (emptyTiles.length === 0) return;
+            const { r, c } = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+            grid[r][c] = Math.random() < 0.9 ? initValue : initValue * 2;
+        }
+
+        function updateGrid() {
+            const tiles = document.querySelectorAll('.tile');
+            for (let i = 0; i < tiles.length; i++) {
+                const r = Math.floor(i / gridSize);
+                const c = i % gridSize;
+                const value = grid[r][c];
+                tiles[i].textContent = value === 0 ? '' : value;
+                tiles[i].setAttribute('data-value', value);
+            }
+        }
+
+        function moveTiles(direction) {
+            const previousGrid = JSON.stringify(grid);
+            
+            switch (direction) {
+                case 'left':
+                    for (let r = 0; r < gridSize; r++) {
+                        grid[r] = slideRow(grid[r]);
+                    }
+                    break;
+                case 'right':
+                    for (let r = 0; r < gridSize; r++) {
+                        grid[r] = slideRow(grid[r].reverse()).reverse();
+                    }
+                    break;
+                case 'up':
+                    for (let c = 0; c < gridSize; c++) {
+                        const column = slideRow(grid.map(row => row[c]));
+                        for (let r = 0; r < gridSize; r++) {
+                            grid[r][c] = column[r];
+                        }
+                    }
+                    break;
+                case 'down':
+                    for (let c = 0; c < gridSize; c++) {
+                        const column = slideRow(grid.map(row => row[c]).reverse()).reverse();
+                        for (let r = 0; r < gridSize; r++) {
+                            grid[r][c] = column[r];
+                        }
+                    }
+                    break;
+            }
+
+            if (JSON.stringify(grid) !== previousGrid) {
+                addTile();
+                updateGrid();
+            }
+        }
+
+        function slideRow(row) {
+            row = row.filter(val => val);
+            for (let i = 0; i < row.length - 1; i++) {
+                if (row[i] === row[i + 1]) {
+                    row[i] *= 2;
+                    row[i + 1] = 0;
+                }
+            }
+            row = row.filter(val => val);
+            while (row.length < gridSize) row.push(0);
+            return row;
+        }
+
+
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowLeft': moveTiles('left'); break;
+                case 'ArrowRight': moveTiles('right'); break;
+                case 'ArrowUp': moveTiles('up'); break;
+                case 'ArrowDown': moveTiles('down'); break;
+            }
+        });
+
+        createGrid();
+    </script>
+</body>
+</html>
