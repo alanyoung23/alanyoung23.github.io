@@ -23,6 +23,54 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         }
 
+        .game-controls {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-left: 20px;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+
+        
+
+        .button {
+            width: 60px;
+            height: 60px;
+            margin: 10px;
+            background-color: #8f7a66;
+            color: white;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #bbada0;
+            transform: scale(1.1);
+        }
+
+        .button:active {
+            background-color: #6e5b4e;
+        }
+        
+        
         h1 {
             text-align: center;
             color: #776e65;
@@ -66,6 +114,21 @@
         <h1>2048 Game</h1>
         <div class="grid" id="grid">
             <!-- Tiles will be added here by JavaScript -->
+        </div>
+    </div>
+
+    <div class="game-controls">
+        <div class="button-container">
+            <div id="button-up" class="button-row">
+                <button class="button" id="upBtn">↑</button>
+            </div>
+            <div class="button-row">
+                <button class="button" id="leftBtn">←</button>
+                <button class="button" id="rightBtn">→</button>
+            </div>
+            <div id="button-down" class="button-row">
+                <button class="button" id="downBtn">↓</button>
+            </div>
         </div>
     </div>
 
@@ -174,6 +237,12 @@
         });
 
         createGrid();
+
+        // Attach event listeners to the direction buttons
+        document.getElementById('leftBtn').addEventListener('click', () => moveTiles('left'));
+        document.getElementById('upBtn').addEventListener('click', () => moveTiles('up'));
+        document.getElementById('rightBtn').addEventListener('click', () => moveTiles('right'));
+        document.getElementById('downBtn').addEventListener('click', () => moveTiles('down'));
     </script>
 </body>
 </html>
